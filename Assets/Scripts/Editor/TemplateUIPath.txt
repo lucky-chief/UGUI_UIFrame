@@ -1,0 +1,15 @@
+public sealed class UIPath
+{
+    public readonly static UIPath Instance = new UIPath();
+    private UIPath() { }
+
+    public string GetUIPath(UINames UIName)
+    {
+        string path = "";
+        switch(UIName)
+        {
+            case $CASE_PLACE$
+        }
+        return path;
+    }
+}

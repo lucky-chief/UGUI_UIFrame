@@ -7,6 +7,7 @@ using System.Reflection;
 public class NewUIWindow : EditorWindow {
     public static GameObject UIParent;
     static Vector2 windowSize = new Vector2(300, 300);
+    const string UI_PREFAB_ROOT = "Prefabs/UI/";
 
 	public static void Init()
     {
@@ -31,6 +32,10 @@ public class NewUIWindow : EditorWindow {
                 return;
             }
             Create_UI_Script();
+        }
+        if(GUI.Button(new Rect(10,60,50,30),"生成脚本"))
+        {
+            Create_UINames_Script();
         }
         GUI.TextArea(new Rect(5, 110, 295, 150), "单击 创建 按钮，可以完成一下事情：\n1、生成一个UI预制,存放路径：Resources/Prefabs/UI,没有则创建；\n2、生成对应的UI脚本，脚本名与填写的UI名称形同，并挂在刚刚生成的UI预制上，存放路径：Scripts/Logic/UI；\n3、在UINames的脚本中添加对应的ui类型，即为填写的UI名称；\n4、在UIPath脚本中生成对应的路径代码。");
     }
@@ -59,9 +64,12 @@ public class NewUIWindow : EditorWindow {
     void Create_UINames_Script()
     {
         string[] files = Directory.GetFiles(Application.dataPath + "/Resources/Prefabs/UI/");
-        string templatePath = Application.dataPath + "/Scripts/Editor/TemplateUINames.txt";
-        string cs = File.ReadAllText(templatePath);
+        string uiNamestemplatePath = Application.dataPath + "/Scripts/Editor/TemplateUINames.txt";
+        string uiPathtemplatePath = Application.dataPath + "/Scripts/Editor/TemplateUIPath.txt";
+        string uiNamesCs = File.ReadAllText(uiNamestemplatePath);
+        string uiPathCs = File.ReadAllText(uiPathtemplatePath);
         string enumBodies = "";
+        string pathBodies = "";
         foreach (string file in files)
         {
             if (!file.EndsWith(".meta"))
@@ -69,11 +77,25 @@ public class NewUIWindow : EditorWindow {
                 string[] directoryRootNames = file.Split('/');
                 string fileName = directoryRootNames[directoryRootNames.Length - 1].Split('.')[0];
                 Debug.Log(fileName);
-                enumBodies += fileName + ",\n";
+                enumBodies += "    " + fileName + ",\r\n";
+                pathBodies += "        case UINames." + fileName + ":\r\n            return \"" + UI_PREFAB_ROOT + fileName + "\";\r\n";   
             }
         }
-        cs = cs.Replace("$UI_NAMES$", enumBodies);
-        Debug.Log(files.Length);
+        uiNamesCs = uiNamesCs.Replace("$UI_NAMES$", enumBodies);
+        uiPathCs = uiPathCs.Replace("$CASE_PLACE$", pathBodies);
+
+        string path = Application.dataPath + "/Scripts/Core/UI/UINames.cs";
+        byte[] byteArray = System.Text.Encoding.Default.GetBytes(uiNamesCs);
+        FileStream stream = File.Create(path);
+        stream.Write(byteArray, 0, uiNamesCs.Length);
+        stream.Close();
+
+        path = Application.dataPath + "/Scripts/Core/UI/UIPath.cs";
+        FileStream stream2 = File.Create(path);
+        byteArray = System.Text.Encoding.Default.GetBytes(uiPathCs);
+        stream2.Write(byteArray, 0, uiPathCs.Length);
+        stream2.Close();
+        AssetDatabase.Refresh();
     }
 
     void Create_UIPath_Script()

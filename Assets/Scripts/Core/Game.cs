@@ -58,7 +58,6 @@ public class Game : MonoBehaviour {
         uiRoot = ui_Root;
         UIManager.Instance.InitUIManager(uiRoot.transform.FindChild("UI"));
         DontDestroyOnLoad(uiRoot);
-        UIManager.Instance.OpenUI(UINames.Snake_Room_SelectUI);
     }
 
     private void AutoRegisterUpdateObj()

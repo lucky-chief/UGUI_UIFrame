@@ -8,7 +8,7 @@ public sealed class UIPath
         string path = "";
         switch(UIName)
         {
-            case $CASE_PLACE$
+            $CASE_PLACE$
         }
         return path;
     }

@@ -1,5 +1,5 @@
-public enum UINames  {
+public enum UINames : byte  {
     Canvas,
-    TestUI,
-
+    GameUI,
+    StartGameUI,
 }

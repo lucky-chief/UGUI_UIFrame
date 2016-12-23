@@ -10,8 +10,10 @@ public sealed class UIPath
         {
                     case UINames.Canvas:
             return "Prefabs/UI/Canvas";
-        case UINames.TestUI:
-            return "Prefabs/UI/TestUI";
+        case UINames.GameUI:
+            return "Prefabs/UI/GameUI";
+        case UINames.StartGameUI:
+            return "Prefabs/UI/StartGameUI";
 
         }
         return path;

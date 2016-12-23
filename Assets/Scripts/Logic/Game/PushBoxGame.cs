@@ -17,7 +17,11 @@ public class PushBoxGame
             grids.AddRange(FindTripletGrids(gridContainer.SelfGrids, false));//纵向
             if(grids.Count > 0)
             {
-
+                for(int i = 0; i < grids.Count; i++)
+                {
+                    gridContainer.SelfGrids.Remove(grids[i]);
+                    UnityEngine.GameObject.Destroy(grids[i].gameObject);
+                }
             }
         }
     }

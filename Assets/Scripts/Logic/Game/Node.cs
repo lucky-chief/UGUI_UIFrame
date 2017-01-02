@@ -32,7 +32,7 @@ public class Node {
         {
             return new Node(X - 1, Y);
         }
-        return null;
+        return new Node(0, Y);
     }
 
     public Node RightNode()
@@ -41,7 +41,25 @@ public class Node {
         {
             return new Node(X + 1, Y);
         }
-        return null;
+        return new Node(GridContainer.MAX_COL - 1,Y);
+    }
+
+    public Node BottomNode()
+    {
+        if (Y -1 >= 0)
+        {
+            return new Node(X, Y - 1);
+        }
+        return new Node(X,0);
+    }
+
+    public Node TopNode()
+    {
+        if (Y + 1 <= GridContainer.MAX_ROW)
+        {
+            return new Node(X, Y + 1);
+        }
+        return new Node(X,GridContainer.MAX_ROW - 1);
     }
 
     public int Distance(Node node)

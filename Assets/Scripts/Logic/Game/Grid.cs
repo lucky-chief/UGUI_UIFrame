@@ -13,7 +13,8 @@ public enum GridValue
     grid_six,
 }
 
-public class Grid : MonoBehaviour {
+public class Grid : MonoBehaviour
+{
     public Text valeText;
     private GridValue value;
     private Node node;
@@ -24,57 +25,56 @@ public class Grid : MonoBehaviour {
     private Node moveDestNode;
     private bool self;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	    if(moving)
+    // Use this for initialization
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (moving)
         {
-            if(node.Distance(destNode) == 1)
+            if (self)
             {
-                if(self)
+                if (GridContainer.NodeToPosition(destNode).y - 120 > transform.localPosition.y)
                 {
-                    if(GridContainer.NodeToPosition(moveDestNode).y >= transform.localPosition.y)
-                    {
-                        Move();
-                    }
-                    else
-                    {
-                        moving = false;
-                        SetNode(moveDestNode);
-                        PushBoxGame.Instance.gridContainer.SelfGrids.Add(this);
-                        PushBoxGame.Instance.CheckRemove(true);
-                    }
+                    Move();
                 }
                 else
                 {
-                    if (GridContainer.NodeToPosition(moveDestNode).y <= transform.localPosition.y)
+                    moving = false;
+                    SetNode(destNode);
+                    if (!PushBoxGame.Instance.gridContainer.Contains(this))
                     {
-                        Move();
+                        PushBoxGame.Instance.gridContainer.SelfGrids.Add(this);
                     }
-                    else
-                    {
-                        moving = false;
-                        SetNode(moveDestNode);
-                        PushBoxGame.Instance.gridContainer.enemyGrids.Add(this);
-                    }
+                    PushBoxGame.Instance.CheckRemove(true);
                 }
             }
             else
             {
-                Move();
+                if (GridContainer.NodeToPosition(destNode).y + 120 <= transform.localPosition.y)
+                {
+                    Move();
+                }
+                else
+                {
+                    moving = false;
+                    SetNode(destNode);
+                    PushBoxGame.Instance.gridContainer.EnemyGrids.Add(this);
+                }
             }
         }
-	}
+    }
 
     public GridValue Value
     {
         get { return this.value; }
-        
-        set{
+
+        set
+        {
             this.value = value;
             if (null != valeText)
             {
@@ -97,7 +97,6 @@ public class Grid : MonoBehaviour {
         this.speed = speed;
         this.destNode = destNode;
         this.self = self;
-        moveDestNode = new Node(destNode.X, destNode.Y - 1);
         Vector3 pos = GridContainer.NodeToPosition(node);
         moveDir = (GridContainer.NodeToPosition(destNode) - pos).normalized;
         moveDir.x = moveDir.z = 0;
@@ -110,14 +109,14 @@ public class Grid : MonoBehaviour {
         transform.localPosition = GridContainer.NodeToPosition(node);
     }
 
-    public static Grid Spawn(GridValue gridValue,Node node)
+    public static Grid Spawn(GridValue gridValue, Node node)
     {
         GameObject model = Resources.Load<GameObject>(gridValue == GridValue.grid_zero ? "Prefabs/Game/Rock" : "Prefabs/Game/Grid");
         GameObject grid = GameObject.Instantiate<GameObject>(model);
         grid.transform.SetParent(PushBoxGame.Instance.gridContainer.transform);
         grid.transform.localScale = Vector3.one;
         Vector2 pos = GridContainer.NodeToPosition(node);
-        grid.transform.localPosition = new Vector3(pos.x,pos.y,0);
+        grid.transform.localPosition = new Vector3(pos.x, pos.y, 0);
         Grid gridCom = grid.GetComponent<Grid>();
         gridCom.Value = gridValue;
         gridCom.Node = node;

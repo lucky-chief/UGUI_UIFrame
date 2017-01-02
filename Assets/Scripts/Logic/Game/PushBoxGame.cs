@@ -20,10 +20,16 @@ public class PushBoxGame
                 for(int i = 0; i < grids.Count; i++)
                 {
                     gridContainer.SelfGrids.Remove(grids[i]);
+                  ///  gridContainer.MoveRock(grids[i].Node.X, 1);
                     UnityEngine.GameObject.Destroy(grids[i].gameObject);
                 }
             }
+            for(int i = 0; i < GridContainer.MAX_COL; i++)
+            {
+                gridContainer.UpdateSelfNodes(i);
+            }
         }
+
     }
 
     List<Grid> FindTripletGrids(List<Grid> sortedGrids, bool horizontal)
@@ -49,6 +55,7 @@ public class PushBoxGame
 
         for (int i = min; i <= max; i++)
         {
+            tempList.Clear();
             for (int j = 0; j < sortedGrids.Count; j++)
             {
                 if (i == (h ? sortedGrids[j].Node.Y : sortedGrids[j].Node.X))
@@ -68,21 +75,34 @@ public class PushBoxGame
                     return h ? small.Node.X - big.Node.X : small.Node.Y - big.Node.Y;
                 });
                 List<Grid> ls = new List<Grid>() { tempList[0] };
-                for (int j = 1; j < tempList.Count; j++)
+                for (int j = 1; j < tempList.Count;j++)
                 {
-                    if ((h ? tempList[j].Node.X - tempList[j - 1].Node.X : tempList[j].Node.Y - tempList[j - 1].Node.Y) == 1)
+                    if (tempList[j].Value == tempList[j - 1].Value
+                        && (h ? tempList[j].Node.X - tempList[j - 1].Node.X : tempList[j].Node.Y - tempList[j - 1].Node.Y) == 1)
                     {
                         ls.Add(tempList[j]);
                     }
                     else
                     {
-                        ls.Clear();
-                        if (tempList.Count - j < 3) break;
+                        if (ls.Count >= 3)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            ls.Clear();
+                            ls.Add(tempList[j]);
+                            if (tempList.Count - j < 3) break;
+                        }
                     }
                 }
                 if (ls.Count >= 3)
                 {
                     retList.AddRange(ls);
+                }
+                else
+                {
+                    tempList.Clear();   
                 }
             }
         }
